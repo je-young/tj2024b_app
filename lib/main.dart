@@ -7,7 +7,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  //이 위젯은 응용 프로그램의 루트입니다.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -77,31 +77,31 @@ class _MyHomePageState extends State<MyHomePage> {
     // 위젯 인스턴스를 개별적으로 변경하는 것보다.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
+        // 이것을 시도하십시오 : 여기에서 색상을 특정 색상으로 변경해보십시오 (
+        // colors.amber, 아마도?) 그리고 핫 재 장전을 트리거하여 AppBar를 볼 수 있습니다.
+        // 다른 색상이 동일하게 유지되는 동안 색상 변경.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+        // 여기에서 우리는 생성 된 myHomePage 객체에서 값을 가져옵니다.
+        // app.build 메소드를 사용하여 AppBar 제목을 설정하는 데 사용합니다.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+        // 센터는 레이아웃 위젯입니다. 한 아이가 필요하고 위치합니다
+        // 부모의 한가운데.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
+          // 열은 또한 레이아웃 위젯입니다. 아이들의 목록을 취합니다
+          // 수직으로 배열합니다. 기본적으로 크기 자체가 적합합니다
+          // 어린이는 수평으로, 부모만큼 키가 큽니다.
           //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
+          // 칼럼에는 크기 자체의 크기를 제어하기위한 다양한 속성이 있습니다.
+          // 자녀를 어떻게 배치하는지. 여기서 우리는 mainaxisalignment를 사용합니다
+          // 어린이를 수직으로 중심으로; 여기의 주요 축은 수직입니다
+          // 열이 수직이기 때문에 축 (교차 축은
+          // 수평의).
           //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
+          // 이것을 시도하십시오 : "디버그 페인팅"을 호출하십시오 ( "토글 디버그 페인트"를 선택하십시오.
+          // IDE에서 행동하거나 콘솔에서 "P"를 누르면
+          // 각 위젯의 와이어 프레임.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
@@ -116,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), //이 후행 쉼표는 빌드 방법을 위해 자동 형식화가 더 좋습니다.
     );
   }
 }
