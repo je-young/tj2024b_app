@@ -1,0 +1,34 @@
+[ 위젯 ] widget
+    1. 정의 : 화면을 구성하는 요소
+    2. 목적 : 여러개의 위젯을 조립해서 하나의 앱 구성
+        -> 위젯 : UI를 구성하는 최소 단위
+        -> 작은 위젯들을 모아서 하나의 화면/앱 구성
+
+[ StatelessWidget VS StatefulWidget ]
+    [종류]
+        1. StatelessWidget : 고정 화면을 만드는 기본 위젯을 제공하는 클래스
+        2. StatefulWidget : 변화는 화면을 만드는 기본 위젯을 제공하는 클래스
+    [공통] : build() 함수 플러터에서 화면(UI) 그리는 함수. ( 추상메소드 )
+        개발자가 build() 를 오버라이딩(재정의) 하여 return 에 출력할 위젯들을 작성한다.
+
+* 가장 기본적인 플러터 실행 코드
+void main(){
+    runApp( 클래스명() );
+}
+class 클래스명 extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return 위젯코드작성;
+  } // f end
+}
+
+[ 대표 위젯 ]
+    1. MaterialApp      : 앱의 전체 위젯 들의 틀을 정의 하는 최상위 위젯
+    2. Scaffold         : 기본적인 앱 레이아웃(헤더/푸터/본문 등등) 제공하는 위젯
+        Scaffold(
+            위젯명 : 위젯클래스( )
+        )
+    3. AppBar           : 상단 메뉴 바
+    4. Center           : 가로/세로 정가운데 정렬
+    4. Text             : 텍스트
+    5. BottomAppBar     : 하단 메뉴 바
