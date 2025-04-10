@@ -12,10 +12,10 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+            <!-- 이 활동에 빨리 적용 할 안드로이드 테마를 지정합니다.
+                 안드로이드 프로세스가 시작되었습니다. 이 테마는 사용자에게 보입니다
+                 플러터 UI가 초기화되는 동안. 그 후이 주제는 계속됩니다
+                 플러터 UI 뒤의 창 배경을 결정합니다. -->
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
@@ -25,21 +25,25 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!-- 아래 메타 데이터를 삭제하지 마십시오.
+             Flutter Tool에서 생성 된 pluginregistrant.java를 생성하는 데 사용됩니다. -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <!-- Required to query activities that can process text, see:
-         https://developer.android.com/training/package-visibility and
-         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+    <!-- 텍스트를 처리 할 수있는 활동을 쿼리하려면 다음을 참조하십시오.
+         https://developer.android.com/training/package-visibility 및
+         https://developer.android.com/reference/android/content/intent#action_process_text.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+         특히, 이것은 io.flutter.plugin.text.processtextplugin의 Flutter Engine에서 사용합니다. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+    <!--  안드로이드 배포시 https( dio 사용중 )  권한 설정  -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

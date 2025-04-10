@@ -25,7 +25,9 @@ class _WriteState extends State<Write> {
         "content" : contentController.text , // 입력한 내용
         "done" : false // 상태
       }; // end sendData
-      final response = await dio.post('http://10.0.2.2:8080/day04/todos', data: sendData); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      //final response = await dio.post('http://localhost:8080/day04/todos', data: sendData); // dio를 이용한 POST 통신
+      //final response = await dio.post('http://10.0.2.2:8080/day04/todos', data: sendData); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      final response = await dio.post('https://accurate-keriann-jey2965-01e9656d.koyeb.app/day04/todos', data: sendData); // ✅ 배포후 IP 주소
       final data = response.data;
       if(data != null){ // 등록 성공시
         Navigator.pushNamed(context, "/"); // 라우터 이용한 "/" 경로로 이동

@@ -18,7 +18,9 @@ class _HomeState extends State<Home> {
   // 3. 자바와 통신 하여 할일 목록을 조회하는 함수 선언
   void todoFindAll() async {
     try {
-      final response = await dio.get('http://10.0.2.2:8080/day04/todos'); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      //final response = await dio.get('http://localhost:8080/day04/todos'); // dio를 이용한 GET 통신
+      //final response = await dio.get('http://10.0.2.2:8080/day04/todos'); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      final response = await dio.get('https://accurate-keriann-jey2965-01e9656d.koyeb.app/day04/todos'); // ✅ 배포후 IP 주소
       final data = response.data;
       // 조회 결과 없으면 [] , 조회 결과가 있으면 [ {} , {} , {} ]
       // setState 이용하여 재 렌더링한다.
@@ -41,7 +43,9 @@ class _HomeState extends State<Home> {
   // 5. 삭제 이벤트 함수
   void todoDelete(int id) async {
     try {
-      final response = await dio.delete('http://10.0.2.2:8080/day04/todos?id=$id',); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      //final response = await dio.delete('http://localhost:8080/day04/todos?id=$id'); // dio를 이용한 DELETE 통신
+      //final response = await dio.delete('http://10.0.2.2:8080/day04/todos?id=$id',); // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
+      final response = await dio.delete('https://accurate-keriann-jey2965-01e9656d.koyeb.app/day04/todos?id=$id',); // ✅ 배포후 IP 주소
       final data = response.data;
       if (data == true) {
         todoFindAll(); // 삭제 성공시 할일 목록 다시 호출 하기.
@@ -81,8 +85,7 @@ class _HomeState extends State<Home> {
                       // todo["key"] <==> value
                       return Card(
                         child: ListTile(
-                          title: Text(todo["title"]),
-                          // 제목
+                          title: Text(todo["title"]), // 제목
                           subtitle: Column(
                             children: [
                               // dart 언어 에서 문자와 변수를 같이 출력 하는 방법
@@ -92,23 +95,26 @@ class _HomeState extends State<Home> {
                               Text("할일내용 : ${todo["content"]}"),
                               Text("할일상태 : ${todo["done"]}"),
                               Text("등록일 : ${todo["createdAt"]}"),
-                            ],
-                          ),
-                          // subtitle 속성 이후 이므로 ,(세미콜론)을 추가하여 이어서 trailing 속성을 아래에 추가한다.
+                            ], // end children
+                          ), // end Column
                           // trailing : ListTile 오른쪽 끝에 표시되는 위젯
-                          trailing: IconButton(
-                            onPressed: () => todoDelete(todo["id"]),
-                            icon: Icon(Icons.delete),
-                          ),
-                        ),
+                          trailing: Row ( // 하위 위젯들을 가로 배치 vs Coliumn
+                            mainAxisSize: MainAxisSize.min, // 배치방법 , 오른쪽 위젯들의 넓이를 자동으로 최소 할당.
+                            children: [ // Row 위젯의 자식들
+                              IconButton(onPressed: ()=>{ Navigator.pushNamed(context, "/update", arguments: todo["id"]) }, icon: Icon(Icons.edit)),
+                              IconButton(onPressed: ()=>{ Navigator.pushNamed(context, "/detail", arguments: todo["id"]) }, icon: Icon(Icons.info)),
+                              IconButton(onPressed: () => { todoDelete(todo["id"]) }, icon: Icon(Icons.delete)),
+                            ], // end children
+                          ) // end Row
+                        ), // end ListTile
                       ); // ;(세미콜론) return 마다
                     }).toList(), // map 결과를 toList() 함수를 이용하여 List 타입으로 변환
-              ),
-            ),
+              ), // end ListView
+            ), // end Expanded
           ], // end children
-        ),
-      ),
-    );
+        ), // end Column
+      ), // end Center
+    ); // end Scaffold
   } // end build
 } // end HomeState
 
