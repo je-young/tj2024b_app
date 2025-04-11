@@ -5,9 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 // API 기본 URL (필요시 별도 파일로 분리 권장)
-const String API_BASE_URL = 'http://localhost:8080/api/supplies'; // ✅ dio를 이용한 웹브라우저 IP 주소
+//const String API_BASE_URL = 'http://localhost:8080/api/supplies'; // ✅ dio를 이용한 웹브라우저 IP 주소
 //const String API_BASE_URL = 'http://10.0.2.2:8080/api/supplies'; // ✅ 에뮬레이터 안에서 접근 가능한 로컬 호스트 IP : 10.0.2.2
-//const String API_BASE_URL = 'https://accurate-keriann-jey2965-01e9656d.koyeb.app/api/supplies'; // ✅ 배포후 IP 주소
+const String API_BASE_URL = 'https://accurate-keriann-jey2965-01e9656d.koyeb.app/api/supplies'; // ✅ 배포후 IP 주소
 
 
 
