@@ -1,8 +1,8 @@
 // lib/presentation/screens/home_screen.dart : HomeScreen 클래스 정의
 
 import 'package:flutter/material.dart';
-import '../../data/models/book.dart'; // [1] Book 모델 import (동일)
-import '../../data/services/api_service.dart'; // [2] ApiService import (동일)
+import '../../../data/models/book.dart'; // [1] Book 모델 import (동일)
+import '../../../data/services/api_service.dart'; // [2] ApiService import (동일)
 
 // [3] StatefulWidget 클래스 정의 (동일)
 class HomeScreen extends StatefulWidget {
