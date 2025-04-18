@@ -3,7 +3,7 @@
 
 import 'package:dio/dio.dart'; // [1] dio 패키지 import
 import 'package:flutter_study/data/models/book.dart'; // [2] Book 모델 import
-import 'package:flutter_study/data/models/review.dart'; // [7-1] Review 모델 import
+import 'package:flutter_study/data/models/review.dart'; // [6] Review 모델 import
 
 
 class ApiService {
@@ -63,16 +63,16 @@ class ApiService {
     } // end try
   } // end getBooks
 
-  // [7-2] 책 상세 정보 조회 API 호출 메소드 정의
+  // [6-1] 책 상세 정보 조회 API 호출 메소드 정의
   Future<Book> getBookById(int id) async {
     try {
-      // [7-3] dio.get()을 사용하여 특정 책 ID로 API 호출
+      // [6-2] dio.get()을 사용하여 특정 책 ID로 API 호출
       final response = await _dio.get('/books/$id'); // 경로 변수 사용
 
       if (response.statusCode == 200) {
-        // [7-4] 성공 시: response.data는 Map<String, dynamic> 형태로 예상됨
+        // [6-3] 성공 시: response.data는 Map<String, dynamic> 형태로 예상됨
         if (response.data is Map<String, dynamic>) {
-          // [7-5] Map 데이터를 Book.fromJson을 이용해 Book 객체로 변환
+          // [6-4] Map 데이터를 Book.fromJson을 이용해 Book 객체로 변환
           return Book.fromJson(response.data as Map<String, dynamic>);
         } else {
           throw Exception('책 세부 사항에 대해 잘못된 데이터 형식');
@@ -82,7 +82,7 @@ class ApiService {
             '도서 세부 사항을 로드하지 못했습니다 (상태 코드 : ${response.statusCode})');
       }
     } on DioException catch (e) {
-      // [7-6] Dio 관련 예외 처리
+      // [6-5] Dio 관련 예외 처리
       String errorMessage = '책 세부 사항을로드하지 못했습니다 (ID: $id): ';
       if (e.response != null) {
         if (e.response?.statusCode == 404) {
@@ -95,27 +95,27 @@ class ApiService {
       }
       throw Exception(errorMessage);
     } catch (e) {
-      // [7-7] 기타 에레 처리
+      // [6-6] 기타 에레 처리
       throw Exception('책을 가져 오는 동안 예기치 않은 오류가 발생했습니다. $id: $e');
     } // end try catch
   } // end getBookById
 
-  // [8-1] 특정 책의 리뷰 목록 조회 API 호출 메소드
+  // [7] 특정 책의 리뷰 목록 조회 API 호출 메소드
   Future<List<Review>> getReviewsByBookId(int bookId) async {
     try {
-      // [8-2] dio.get()을 사용하여 특정 책의 ID의 리뷰 목록 API 호출
+      // [7-1] dio.get()을 사용하여 특정 책의 ID의 리뷰 목록 API 호출
       final response = await _dio.get('/books/$bookId/reviews');
 
       if (response.statusCode == 200) {
-        // [8-3] 성공 시: response.data는 List<dynamic> 형태로 예상됨
+        // [7-2] 성공 시: response.data는 List<dynamic> 형태로 예상됨
         if (response.data is List) {
-          // [8-4] List<dynamic>을 List<Review>로 변환
+          // [7-3] List<dynamic>을 List<Review>로 변환
           List<Review> reviews = (response.data as List)
               .map((item) => Review.fromJson(item as Map<String, dynamic>))
               .toList();
           return reviews;
         } else {
-          // [8-5] 책은 존재하지만 리뷰 형식이 잘못된 경우 (가능성은 낮음)
+          // [7-4] 책은 존재하지만 리뷰 형식이 잘못된 경우 (가능성은 낮음)
           throw Exception('리뷰를 위해 수신 된 잘못된 데이터 형식');
         }
       } else {
@@ -123,7 +123,7 @@ class ApiService {
         throw Exception('리뷰를 로드하지 못했습니다 (상태 코드 : ${response.statusCode})');
       } // end if
     } on DioException catch (e) {
-      // [8-6] Dio 관련 예외 처리 (주로 책 ID 자체가 없는 경우에 대한 처리는 getBookById에서 될 것임)
+      // [7-5] Dio 관련 예외 처리 (주로 책 ID 자체가 없는 경우에 대한 처리는 getBookById에서 될 것임)
       String errorMessage = 'Book ID에 대한 리뷰를 로드하지 못했습니다 $bookId: ';
       if (e.response != null) {
         errorMessage += '서버 오류 ${e.response?.statusCode}';
@@ -132,12 +132,12 @@ class ApiService {
       }
       throw Exception(errorMessage);
     } catch (e) {
-      // [8-7] 기타 예외 처리
+      // [7-6] 기타 예외 처리
       throw Exception('책에 대한 리뷰를 가져 오는 동안 예기치 않은 오류가 발생했습니다 $bookId: $e');
     } // end try catch
   } // end getReviewsByBookId
 
-  // [9] 책 등록 API 호출 메소드
+  // [8] 책 등록 API 호출 메소드
   Future<Book> createBook({
     required String title,
     required String author,
@@ -145,7 +145,7 @@ class ApiService {
     required String password,
   }) async {
     try {
-      // [9-1] 요청 본문 데이터 (Map) 생성
+      // [8-1] 요청 본문 데이터 (Map) 생성
       final Map<String, dynamic> data = {
         'title': title,
         'author': author,
@@ -153,15 +153,15 @@ class ApiService {
         'password': password,
       }; // end Map
 
-      // [9-2] dio.post() 사용하여 API 호출 (경로, 데이터 전달)
+      // [8-2] dio.post() 사용하여 API 호출 (경로, 데이터 전달)
       // dio 는 기본적으로 Map 데이터를 JSON 문자열로 변환하여 전송함
       final response = await _dio.post('/books', data: data);
 
-      // [9-3] 응답 상태 코드 확인 (보통 201 Created)
+      // [8-3] 응답 상태 코드 확인 (보통 201 Created)
       if (response.statusCode == 201) {
-        // [9-4] 성공 시: 응답 본문(생성된 Book 정보)을 Map 으로 파싱
+        // [8-4] 성공 시: 응답 본문(생성된 Book 정보)을 Map 으로 파싱
         if (response.data is Map<String, dynamic>) {
-          // [9-5] Map 데이터를 Book.fromJson 으로 Book 객체 변환 후 반환
+          // [8-5] Map 데이터를 Book.fromJson 으로 Book 객체 변환 후 반환
           return Book.fromJson(response.data as Map<String, dynamic>);
         } else {
           throw Exception('Invalid data format received after creating book');
@@ -171,7 +171,7 @@ class ApiService {
         throw Exception('Failed to create book (status code: ${response.statusCode})');
       } // end if
     } on DioException catch (e) {
-      // [9-6] Dio 관련 에러 처리 (400 Bad Request 등)
+      // [8-6] Dio 관련 에러 처리 (400 Bad Request 등)
       String errorMessage = 'Failed to create book: ';
       if (e.response != null) {
         // 서버에서 보낸 에러 메시지가 있다면 포함 (예: 유효성 검사 실패)
@@ -182,7 +182,7 @@ class ApiService {
       } // end if
       throw Exception(errorMessage);
     } catch (e) {
-      // [9-7] 기타 에러 처리
+      // [8-7] 기타 에러 처리
       throw Exception('An unexpected error occurred while creating book: $e');
     } // end try catch
   } // end createBook
