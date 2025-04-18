@@ -137,4 +137,54 @@ class ApiService {
     } // end try catch
   } // end getReviewsByBookId
 
+  // [9] 책 등록 API 호출 메소드
+  Future<Book> createBook({
+    required String title,
+    required String author,
+    required String description,
+    required String password,
+  }) async {
+    try {
+      // [9-1] 요청 본문 데이터 (Map) 생성
+      final Map<String, dynamic> data = {
+        'title': title,
+        'author': author,
+        'description': description,
+        'password': password,
+      }; // end Map
+
+      // [9-2] dio.post() 사용하여 API 호출 (경로, 데이터 전달)
+      // dio 는 기본적으로 Map 데이터를 JSON 문자열로 변환하여 전송함
+      final response = await _dio.post('/books', data: data);
+
+      // [9-3] 응답 상태 코드 확인 (보통 201 Created)
+      if (response.statusCode == 201) {
+        // [9-4] 성공 시: 응답 본문(생성된 Book 정보)을 Map 으로 파싱
+        if (response.data is Map<String, dynamic>) {
+          // [9-5] Map 데이터를 Book.fromJson 으로 Book 객체 변환 후 반환
+          return Book.fromJson(response.data as Map<String, dynamic>);
+        } else {
+          throw Exception('Invalid data format received after creating book');
+        }
+      } else {
+        // 201 외의 성공 코드는 거의 없음
+        throw Exception('Failed to create book (status code: ${response.statusCode})');
+      } // end if
+    } on DioException catch (e) {
+      // [9-6] Dio 관련 에러 처리 (400 Bad Request 등)
+      String errorMessage = 'Failed to create book: ';
+      if (e.response != null) {
+        // 서버에서 보낸 에러 메시지가 있다면 포함 (예: 유효성 검사 실패)
+        errorMessage += e.response?.data?['message'] ?? 'Server error ${e.response?.statusCode}';
+        print('Error response data: ${e.response?.data}');
+      } else {
+        errorMessage += e.message ?? 'Unknown Dio error';
+      } // end if
+      throw Exception(errorMessage);
+    } catch (e) {
+      // [9-7] 기타 에러 처리
+      throw Exception('An unexpected error occurred while creating book: $e');
+    } // end try catch
+  } // end createBook
+
 } // end ApiService

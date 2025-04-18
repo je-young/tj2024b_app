@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_study/data/models/book.dart'; // [1] Book 모델 import
 import 'package:flutter_study/data/services/api_service.dart'; // [2] ApiService import
-import 'package:flutter_study/presentation/screens/book_detail_screen.dart'; // [13-1] BookDetailScreen import
+import 'package:flutter_study/presentation/screens/book_detail_screen.dart'; // [13] BookDetailScreen import
+import 'package:flutter_study/presentation/screens/book_create_screen.dart'; // [14] BookCreateScreen import
 
 
 // [3] StatefulWidget 클래스 정의
@@ -99,14 +100,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: Text(book.author),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () { // [10-6] 아이템 탭 이벤트 처리
-                          // [13-2] 상세 화면으로 이동 (Navigator.push 사용)
+                          // [13-1] 상세 화면으로 이동 (Navigator.push 사용)
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              // [13-3] BookDetailScreen 위젯 생성하여 bookId 전달
+                              // [13-2] BookDetailScreen 위젯 생성하여 bookId 전달
                               builder: (context) => BookDetailScreen(bookId: book.id),
                             ),
-                            // [13-4] 상세 화면에서 돌아 왔을때 목록 새로고침
+                            // [13-3] 상세 화면에서 돌아 왔을때 목록 새로고침
                           ).then((_) => _refreshBooks()); // 책 삭제 / 수정 후 반영
                         }, // end onTap
                       ), // end ListTile
@@ -126,10 +127,12 @@ class _HomeScreenState extends State<HomeScreen> {
       // [12] FloatingActionButton
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('Go to create book screen');
-          ScaffoldMessenger.of(
+          // [14-1] BookCreateScreen 으로 이동
+          Navigator.push(
             context,
-          ).showSnackBar(const SnackBar(content: Text('책 등록 화면 이동 구현 예정')));
+            MaterialPageRoute(builder: (context) => const BookCreateScreen()),
+            // [14-2] 등록 화면에서 돌아왔을 때 목록 새로고침
+          ).then((_) => _refreshBooks()); // 책 등록 루 바로 반영
         }, // end onPressed
         child: const Icon(Icons.add),
         tooltip: '책 추천 등록',
