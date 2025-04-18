@@ -24,7 +24,8 @@ class Book {
       title: json["title"],
       author: json["author"],
       description: json["description"],
-      createdAt: json["createdAt"] // 날짜 문자열 파싱
+      // DateTime.parse()를 사용하여 JSON 문자열을 DateTime 객체로 변환
+      createdAt: DateTime.parse(json["createdAt"] as String)
   ); // end Book.fromJson
 
 } // end Book
