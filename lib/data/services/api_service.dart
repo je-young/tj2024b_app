@@ -1,22 +1,21 @@
 // lib/data/services/api_service.dart : API 연동을 위한 Dart 클래스
 
-
 import 'package:dio/dio.dart'; // [1] dio 패키지 import
 import 'package:flutter_study/data/models/book.dart'; // [2] Book 모델 import
 import 'package:flutter_study/data/models/review.dart'; // [6] Review 모델 import
 
-
 class ApiService {
   // [3] Dio 인스턴스 생성 및 기본 설정
-  final Dio _dio = Dio(BaseOptions(
-    // [3-1] 백엔드 API 기본 URL 정의 (★ 중요: 환경에 맞게 수정)
-    baseUrl: 'http://localhost:8080/api', // Web 브라우저
-    // baseUrl: 'http://10.0.2.2:8080/api', // Android 에뮬레이터
-    // baseUrl: 'http://localhost:8080/api', // iOS 시뮬레이터 또는 웹
-    connectTimeout: const Duration(seconds: 5), // 연결 타임아웃 5초
-    receiveTimeout: const Duration(seconds: 3), // 응답 타임아웃 3초
-  ));
-
+  final Dio _dio = Dio(
+    BaseOptions(
+      // [3-1] 백엔드 API 기본 URL 정의 (★ 중요: 환경에 맞게 수정)
+      baseUrl: 'http://localhost:8080/api', // Web 브라우저
+      // baseUrl: 'http://10.0.2.2:8080/api', // Android 에뮬레이터
+      // baseUrl: 'http://localhost:8080/api', // iOS 시뮬레이터 또는 웹
+      connectTimeout: const Duration(seconds: 5), // 연결 타임아웃 5초
+      receiveTimeout: const Duration(seconds: 3), // 응답 타임아웃 3초
+    ),
+  );
 
   // [4] 책 목록 조회 API 호출 메소드 정의
   Future<List<Book>> getBooks() async {
@@ -31,9 +30,10 @@ class ApiService {
         if (response.data is List) {
           // [4-4] List<dynamic>을 List<Book>으로 변환
           // 각 Map 아이템을 Book.fromJson을 이용해 Book 객체로 만들고 리스트로 반환
-          List<Book> books = (response.data as List)
-              .map((item) => Book.fromJson(item as Map<String, dynamic>))
-              .toList();
+          List<Book> books =
+              (response.data as List)
+                  .map((item) => Book.fromJson(item as Map<String, dynamic>))
+                  .toList();
           return books;
         } else {
           // [4-5] 예상치 못한 데이터 타입인 경우 에러 처리
@@ -44,7 +44,8 @@ class ApiService {
         // 필요하다면 여기서 추가 상태 코드 처리 가능
         throw Exception('책을로드하지 못했습니다. (상태 코드 : ${response.statusCode})');
       } // end if
-    } on DioException catch (e) { // [5] Dio 관련 에러 처리 (네트워크, 타임아웃, 상태 코드 에러 등)
+    } on DioException catch (e) {
+      // [5] Dio 관련 에러 처리 (네트워크, 타임아웃, 상태 코드 에러 등)
       String errorMessage = '책을 로드하지 못했습니다 : ';
       if (e.response != null) {
         // [5-1] 서버 응답이 있는 경우 (4xx, 5xx 등)
@@ -57,7 +58,8 @@ class ApiService {
         errorMessage += e.message ?? '알 수없는 DIO 오류';
       } // end if
       throw Exception(errorMessage);
-    } catch (e) { // [6] Dio 외의 다른 예외 처리
+    } catch (e) {
+      // [6] Dio 외의 다른 예외 처리
       print('예상치 못한 오류 : $e');
       throw Exception('예상치 못한 오류가 발생했습니다. $e');
     } // end try
@@ -79,7 +81,8 @@ class ApiService {
         }
       } else {
         throw Exception(
-            '도서 세부 사항을 로드하지 못했습니다 (상태 코드 : ${response.statusCode})');
+          '도서 세부 사항을 로드하지 못했습니다 (상태 코드 : ${response.statusCode})',
+        );
       }
     } on DioException catch (e) {
       // [6-5] Dio 관련 예외 처리
@@ -110,9 +113,10 @@ class ApiService {
         // [7-2] 성공 시: response.data는 List<dynamic> 형태로 예상됨
         if (response.data is List) {
           // [7-3] List<dynamic>을 List<Review>로 변환
-          List<Review> reviews = (response.data as List)
-              .map((item) => Review.fromJson(item as Map<String, dynamic>))
-              .toList();
+          List<Review> reviews =
+              (response.data as List)
+                  .map((item) => Review.fromJson(item as Map<String, dynamic>))
+                  .toList();
           return reviews;
         } else {
           // [7-4] 책은 존재하지만 리뷰 형식이 잘못된 경우 (가능성은 낮음)
@@ -168,14 +172,18 @@ class ApiService {
         }
       } else {
         // 201 외의 성공 코드는 거의 없음
-        throw Exception('Failed to create book (status code: ${response.statusCode})');
+        throw Exception(
+          'Failed to create book (status code: ${response.statusCode})',
+        );
       } // end if
     } on DioException catch (e) {
       // [8-6] Dio 관련 에러 처리 (400 Bad Request 등)
       String errorMessage = 'Failed to create book: ';
       if (e.response != null) {
         // 서버에서 보낸 에러 메시지가 있다면 포함 (예: 유효성 검사 실패)
-        errorMessage += e.response?.data?['message'] ?? 'Server error ${e.response?.statusCode}';
+        errorMessage +=
+            e.response?.data?['message'] ??
+            'Server error ${e.response?.statusCode}';
         print('Error response data: ${e.response?.data}');
       } else {
         errorMessage += e.message ?? 'Unknown Dio error';
@@ -187,4 +195,55 @@ class ApiService {
     } // end try catch
   } // end createBook
 
+  // [9] 리뷰 등록 API 호출 메소드
+  Future<Review> createReview({
+    required int bookId, // [9-1] 리뷰를 등록할 책의 ID
+    required String content, // [9-2] 리뷰 내용
+    required String password, // [9-3] 리뷰 삭제용 비밀번호
+  }) async {
+    try {
+      // [9-4] 요청 본문 데이터 생성
+      final Map<String, dynamic> data = {
+        'content': content,
+        'password': password,
+      }; // end Map
+
+      // [9-5] dio.post() 사용하여 API 호출 (경로에 bookId 포함)
+      final response = await _dio.post('/books/$bookId/reviews', data: data);
+
+      // [9-6] 응답 상태 코드 확인 (201 Created)
+      if (response.statusCode == 201) {
+        // [9-7] 성공 시: 응답 본문을 Review 객체로 변환 후 반환
+        if (response.data is Map<String, dynamic>) {
+          return Review.fromJson(response.data as Map<String, dynamic>);
+        } else {
+          throw Exception('리뷰 생성에 대해 잘못된 데이터 형식');
+        } // end if
+      } else {
+        throw Exception(
+          '리뷰 작성 실패 (status code: ${response.statusCode})',
+        );
+      } // end if
+    } on DioException catch (e) {
+      // [9-8] Dio 관련 에러 처리 (책 ID 없음 404, 입력값 오류 400 등)
+      String errorMessage = '리뷰 작성 실패: ';
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          errorMessage =
+              '리뷰를 작성할 수 없습니다.: Book with ID $bookId 찾을 수 없음.';
+        } else {
+          errorMessage +=
+              e.response?.data?['message'] ??
+              '서버 에러 ${e.response?.statusCode}';
+        } // end if
+        print('에러 응답 데이터: ${e.response?.data}');
+      } else {
+        errorMessage += e.message ?? '알 수 없는 Dio 오류';
+      } // end if
+      throw Exception(errorMessage);
+    } catch (e) {
+      // [9-9] 기타 에러 처리
+      throw Exception('리뷰를 만드는 동안 예기치 않은 오류가 발생했습니다.: $e');
+    } // end try catch
+  } // end async createReview
 } // end ApiService
