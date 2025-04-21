@@ -168,6 +168,94 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     ).whenComplete(() => passwordController.dispose()); // 다이얼로그 닫힐 때 컨트롤러 정리
   } // end async _showPasswordDialog
 
+  // [20] 리뷰 삭제 처리 함수
+  Future<void> _deleteReview(int reviewId) async {
+    // [20-1] 비밀번호 입력 다이얼로그 호출
+    final password = await _showPasswordDialog(
+        title: '리뷰 삭제',
+        content: '리뷰 삭제를 위한 비밀번호를 입력하세요.'
+    );
+
+    // [20-2] 비밀번호가 입력되었는지 확인 (취소 누르면 null)
+    if (password != null && password.isNotEmpty) {
+      // 로딩 표시 시작 (선택적: 화면 전체 또는 버튼에 표시)
+      // 예: setState(() => _isDeletingReviewId = reviewId);
+
+      try {
+        // [20-3] API 호출하여 리뷰 삭제
+        await apiService.deleteReview(reviewId: reviewId, password: password);
+
+        // [20-4] 성공 시: 성공 메시지 표시 및 리뷰 목록 새로고침
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('리뷰가 삭제되었습니다.')),
+          );
+          _loadReviews(); // 상태 업데이트
+        }
+      } catch (e) {
+        // [20-5] 실패 시: 에러 메시지 표시
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('리뷰 삭제 실패: ${e.toString().replaceFirst('Exception: ', '')}')),
+          );
+        }
+      } finally {
+        // 로딩 표시 종료
+        // 예: if (mounted) setState(() => _isDeletingReviewId = null);
+      }
+    } else if (password != null) { // 비밀번호 입력 없이 확인 누른 경우
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('비밀번호를 입력해야 삭제할 수 있습니다.')),
+        );
+      }
+    }
+  } // end _deleteReview
+
+  // [21] 책 삭제 처리 함수
+  Future<void> _deleteBook() async {
+    // [21-1] 비밀번호 입력 다이얼로그 호출
+    final password = await _showPasswordDialog(
+        title: '책 추천 삭제',
+        content: '책 삭제를 위한 비밀번호를 입력하세요.'
+    );
+
+    // [21-2] 비밀번호 입력 확인
+    if (password != null && password.isNotEmpty) {
+      // 로딩 표시 시작 (선택적)
+
+      try {
+        // [21-3] API 호출하여 책 삭제
+        await apiService.deleteBook(bookId: widget.bookId, password: password);
+
+        // [21-4] 성공 시: 성공 메시지 표시 및 이전 화면(HomeScreen)으로 돌아가기
+        if (mounted) {
+          // HomeScreen 으로 돌아가기 전에 메시지 표시
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('책 추천 정보가 삭제되었습니다.')),
+          );
+          // pop()을 호출하여 현재 화면 닫기 (HomeScreen의 then() 콜백이 실행되어 목록 새로고침됨)
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        // [21-5] 실패 시: 에러 메시지 표시
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('책 삭제 실패: ${e.toString().replaceFirst('Exception: ', '')}')),
+          );
+        }
+      } finally {
+        // 로딩 표시 종료
+      }
+    } else if (password != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('비밀번호를 입력해야 삭제할 수 있습니다.')),
+        );
+      }
+    }
+  } // end _deleteBook
+
   // [15] 위젯이 제거될 때 컨트롤러 정리
   @override
   void dispose() {
@@ -182,6 +270,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('책 상세 정보'), // AppBar 제목
+        // [22-2] 책 삭제 버튼 추가
+        actions: [
+          IconButton(
+            icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.red,
+            ), // 삭제 아이콘
+            tooltip: '책 삭제', // 툴팁
+            onPressed: _deleteBook, // [21] 에서 만든 책 삭제 함수 연결
+          ),
+          // TODO: 책 수정 버튼 추가 (6단계)
+        ],
       ), // end AppBar
       // [16] 화면 다른 곳 탭 시 키보드 숨기기 및 스크롤 가능하게
       body: GestureDetector(
@@ -293,7 +393,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              // [22-1] 리뷰 삭제 버튼 공간 확보 위해 Padding 조정
+              padding: const EdgeInsets.fromLTRB(12.0, 12.0, 4.0, 12.0),
               // [17-1] 삭제 버튼 공간 확보 위해 Row 추가
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,7 +413,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       ], // end children
                     ), // end Column
                   ), // end Expanded
-                  // TODO: [5단계] 리뷰 삭제 버튼 추가 영역
+
+                  // [22] 리뷰 삭제 버튼 추가 영역
+                  IconButton(
+                    icon: const Icon(
+                        Icons.delete_outline,
+                        size: 20.0,
+                        color: Colors.red,
+                    ), // 아이콘 크기, 색상 조정
+                    tooltip: '리뷰 삭제',
+                    visualDensity: VisualDensity.compact, // 버튼 여백 줄이기
+                    padding: EdgeInsets.zero, // 내부 패딩 제거
+                    onPressed: () => _deleteReview(review.id), // [5-7] 리뷰 삭제 함수 연결
+                  ),
+
                 ], // end children
               ), // end Row
             ), // end Padding
