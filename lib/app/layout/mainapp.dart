@@ -1,6 +1,10 @@
 // * mainapp.dart : 레이아웃 구성 하는 파일
 import 'package:flutter/material.dart';
 import 'package:flutter_study/app/member/signup.dart';
+import 'package:flutter_study/app/member/login.dart';
+import 'package:flutter_study/app/member/info.dart';
+
+
 class MainApp extends StatefulWidget{
   @override
   State<StatefulWidget> createState() { return _MainAppState(); }
@@ -11,8 +15,8 @@ class _MainAppState extends State<MainApp>{
   // Widget : 여러 위젯들을 상속하는 상위 위젯(클래스)
   List<Widget> pages = [
     Text("홈 페이지"),
-    Text("게시물1 페이지"),
-    Text("게시물2 페이지"),
+    Info(), //Text("게시물1 페이지"),
+    Login(), // Text("게시물2 페이지"),
     Signup() //Text("내정보 페이지"),
   ];
   // 2. 페이지 상단 제목 리스트
@@ -40,7 +44,7 @@ class _MainAppState extends State<MainApp>{
                 //   assets :
                 //     - assets/images/
                 Image(
-                  image: AssetImage('assets/images/logo.jpg'), // 로컬이미지 : Image(image: AssetImage('로컬이미지경로'))
+                  image: AssetImage('assets/images/Young_Arc.png'), // 로컬이미지 : Image(image: AssetImage('로컬이미지경로'))
                   height: 50, // 이미지 세로 크기
                   width: 50, // 이미지 가로 크기
                 ),
@@ -69,4 +73,4 @@ class _MainAppState extends State<MainApp>{
 
     ); // Scaffold end
   } // build end
-} // class end
+}

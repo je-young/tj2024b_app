@@ -1,0 +1,20 @@
+[ SharedPreferences ]
+ 1. 정의 : 앱을 종료했거나 다시 켜도 유지되는 데이터를 저장하기 위한 저장소
+     * 앱은 개인 소장이므로 상태유지 하는경우 다수.
+ 2. 목적
+     로그인유지 , 앱설정 , 간단한 캐시 들을 저장
+ 3. 사용법
+     1. 설치 , 의존성 추가
+         1. pubspec.yaml 에 의존성 추가 ( tab 주의 )
+             shared_preferences: ^2.5.3
+         2. 의존성 새로고침 : 상단에 [pub get]
+
+     2. 전역객체 가져오기
+         1. import 'package:shared_preferences/shared_preferences.dart';
+         2. SharedPreferences 변수명 = await SharedPreferences.getInstance();
+
+     3. 값 저장 하기
+         await 변수명.set타입( 'key' , value );
+             - setInt , setString , setBool , setDouble , setStringList
+     4. 값 불러 오기
+         await 변수명.get타입( 'key' );

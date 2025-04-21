@@ -30,6 +30,8 @@ environment:
 dependencies:
   # 비동기 HTTP 통신 라이브러리 추가
   dio: ^5.8.0+1
+  # 비동기 전역변수 라이브러리 추가
+  shared_preferences: ^2.5.3
   # 플러터 SDK 라이브러리 추가
   flutter:
     sdk: flutter
@@ -59,6 +61,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
