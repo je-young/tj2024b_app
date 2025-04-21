@@ -1,6 +1,6 @@
 // lib/data/services/api_service.dart : API 연동을 위한 Dart 클래스
 
-import 'package:dio/dio.dart'; // [1] dio 패키지 import
+import 'package:dio/dio.dart'; // [10] HTTP 통신을 위한 라이브러리
 import 'package:flutter_study/data/models/book.dart'; // [2] Book 모델 import
 import 'package:flutter_study/data/models/review.dart'; // [6] Review 모델 import
 
@@ -220,21 +220,17 @@ class ApiService {
           throw Exception('리뷰 생성에 대해 잘못된 데이터 형식');
         } // end if
       } else {
-        throw Exception(
-          '리뷰 작성 실패 (status code: ${response.statusCode})',
-        );
+        throw Exception('리뷰 작성 실패 (status code: ${response.statusCode})');
       } // end if
     } on DioException catch (e) {
       // [9-8] Dio 관련 에러 처리 (책 ID 없음 404, 입력값 오류 400 등)
       String errorMessage = '리뷰 작성 실패: ';
       if (e.response != null) {
         if (e.response?.statusCode == 404) {
-          errorMessage =
-              '리뷰를 작성할 수 없습니다.: Book with ID $bookId 찾을 수 없음.';
+          errorMessage = '리뷰를 작성할 수 없습니다.: Book with ID $bookId 찾을 수 없음.';
         } else {
           errorMessage +=
-              e.response?.data?['message'] ??
-              '서버 에러 ${e.response?.statusCode}';
+              e.response?.data?['message'] ?? '서버 에러 ${e.response?.statusCode}';
         } // end if
         print('에러 응답 데이터: ${e.response?.data}');
       } else {
@@ -246,4 +242,73 @@ class ApiService {
       throw Exception('리뷰를 만드는 동안 예기치 않은 오류가 발생했습니다.: $e');
     } // end try catch
   } // end async createReview
+
+  // [10-1] 리뷰 삭제 API 호출 메소드
+  Future<void> deleteReview({
+    required int reviewId, // 삭제할 리뷰 ID
+    required String password, // 검증용 비밀번호
+  }) async {
+    try {
+      // [10-2] dio.delete() 사용하여 API 호출 (Query Parameter 로 비밀번호 전달)
+      await _dio.delete(
+        '/reviews/$reviewId', // 경로에 reviewId 포함
+        queryParameters: {'password': password}, // queryParameters 로 전달
+      );
+      // [10-3] 성공 시 (보통 204 No Content) 별도 반환값 없음
+    } on DioException catch (e) {
+      // [10-4] Dio 관련 에러 처리 (리뷰 없음 404, 비밀번호 틀림 400 등)
+      String errorMessage = '리뷰를 삭제하지 못했습니다.: ';
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          errorMessage = 'ID가 $reviewId인 리뷰를 찾을 수 없습니다.';
+        } else if (e.response?.statusCode == 400) {
+          // 백엔드에서 비밀번호 틀릴 시 400 가정
+          errorMessage = e.response?.data?['message'] ?? '비밀번호가 올바르지 않습니다.';
+        } else {
+          errorMessage += '서버 에러 ${e.response?.statusCode}';
+        } // end if else
+        print('에러 응답 데이터: ${e.response?.data}');
+      } else {
+        errorMessage += e.message ?? '알 수 없는 Dio 오류';
+      } // end if else
+      throw Exception(errorMessage);
+    } catch (e) {
+      // [10-5] 기타 에러 처리
+      throw Exception('리뷰를 삭제하는 동안 예기치 않은 오류가 발생했습니다.: $e');
+    } // end try catch
+  } // end async deleteReview
+
+  // [11] 책 삭제 API 호출 메소드
+  Future<void> deleteBook({
+    required int bookId, // 삭제할 책 ID
+    required String password, // 검증용 비밀번호
+  }) async {
+    try {
+      // [11-2] dio.delete() 사용하여 API 호출 (Query Parameter 로 비밀번호 전달)
+      await _dio.delete(
+        '/books/$bookId', // 경로에 bookId 포함
+        queryParameters: {'password': password}, // queryParameters 로 전달
+      );
+      // [11-3] 성공 시 (204 No Content) 별도 반환값 없음
+    } on DioException catch (e) {
+      // [11-4] Dio 관련 에러 처리 (책 없음 404, 비밀번호 틀림 400 등)
+      String errorMessage = '책을 삭제하지 못했습니다.: ';
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          errorMessage = 'ID가 $bookId인 책을 찾을 수 없습니다.';
+        } else if (e.response?.statusCode == 400) {
+          errorMessage = e.response?.data?['message'] ?? '비밀번호가 올바르지 않습니다.';
+        } else {
+          errorMessage += '서버 에러 ${e.response?.statusCode}';
+        } // end else
+        print('에러 응답 데이터: ${e.response?.data}');
+      } else {
+        errorMessage += e.message ?? '알 수 없는 Dio 오류';
+      } // end if else
+      throw Exception(errorMessage);
+    } catch (e) {
+      // [11-5] 기타 에러 처리
+      throw Exception('책을 삭제하는 동안 예기치 않은 오류가 발생했습니다.: $e');
+    } // end try catch
+  } // end async deleteBook
 } // end ApiService

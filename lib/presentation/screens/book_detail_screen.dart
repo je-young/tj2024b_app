@@ -129,6 +129,45 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     } // end if
   } // end _submitReview
 
+  // [19] 비밀번호 입력을 위한 공통 다이얼로그 함수
+  Future<String?> _showPasswordDialog({required String title, required String content}) async {
+    // [19-1] 비밀번호 입력을 받을 TextEditingController 생성
+    final passwordController = TextEditingController();
+
+    // [10-2] showDialog를 통해 다이얼로그 표시 (비밀번호 입력받기)
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false, // 다이얼로그 바깥 탭해도 닫히지 않음
+      builder: (BuildContext context) {
+        // [10-3] AlertDialog 위젯 반환
+        return AlertDialog(
+          title: Text(title), // 다이얼로그 제목 표시
+          content: TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(hintText: content),
+            autofocus: true, // 다이얼로그 열릴 때 자동으로 포커스
+          ), // end TextField
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 비밀번호 없이 닫기 (null 반환)
+              },
+            ), // end TextButton
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                // 입력된 비밀번호와 함께 닫기
+                Navigator.of(context).pop(passwordController.text);
+              }, // end onPressed
+            ), // TextButton
+          ], // end <widget>[]
+        ); // AlertDialog
+      }, // end builder
+    ).whenComplete(() => passwordController.dispose()); // 다이얼로그 닫힐 때 컨트롤러 정리
+  } // end async _showPasswordDialog
+
   // [15] 위젯이 제거될 때 컨트롤러 정리
   @override
   void dispose() {
