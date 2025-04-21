@@ -311,4 +311,58 @@ class ApiService {
       throw Exception('책을 삭제하는 동안 예기치 않은 오류가 발생했습니다.: $e');
     } // end try catch
   } // end async deleteBook
+
+  // [12] 책 수정 API 호출 메소드
+  Future<Book> updateBook({
+    required int bookId,        // [1-1] 수정할 책 ID
+    required String title,       // [1-2] 수정할 제목
+    required String author,      // [1-3] 수정할 저자
+    required String description, // [1-4] 수정할 설명
+    required String password,    // [1-5] 검증용 비밀번호
+  }) async {
+    try {
+      // [12-2] 요청 본문 데이터 생성
+      final Map<String, dynamic> data = {
+        'title': title,
+        'author': author,
+        'description': description,
+        'password': password, // 비밀번호는 body 에 포함하여 전송 (백엔드 구현에 따름)
+      };
+
+      // [12-3] dio.put() 사용하여 API 호출
+      final response = await _dio.put('/books/$bookId', data: data);
+
+      // [12-4] 응답 상태 코드 확인 (보통 200 OK)
+      if (response.statusCode == 200) {
+        // [12-5] 성공 시: 응답 본문(수정된 Book 정보)을 Book 객체로 변환 후 반환
+        if (response.data is Map<String, dynamic>) {
+          return Book.fromJson(response.data as Map<String, dynamic>);
+        } else {
+          throw Exception('Invalid data format received after updating book');
+        }
+      } else {
+        throw Exception('Failed to update book (status code: ${response.statusCode})');
+      }
+    } on DioException catch (e) {
+      // [12-6] Dio 관련 에러 처리 (책 없음 404, 비밀번호 틀림/입력 오류 400 등)
+      String errorMessage = 'Failed to update book: ';
+      if (e.response != null) {
+        if (e.response?.statusCode == 404) {
+          errorMessage = 'Book with ID $bookId not found.';
+        } else if (e.response?.statusCode == 400) {
+          errorMessage = e.response?.data?['message'] ?? 'Incorrect password or invalid data.';
+        } else {
+          errorMessage += 'Server error ${e.response?.statusCode}';
+        }
+        print('Error response data: ${e.response?.data}');
+      } else {
+        errorMessage += e.message ?? 'Unknown Dio error';
+      }
+      throw Exception(errorMessage);
+    } catch (e) {
+      // [12-7] 기타 에러 처리
+      throw Exception('An unexpected error occurred while updating book: $e');
+    }
+  } // end async updateBook
+
 } // end ApiService

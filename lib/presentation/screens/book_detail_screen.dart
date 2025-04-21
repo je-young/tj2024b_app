@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_study/data/models/book.dart';
 import 'package:flutter_study/data/models/review.dart';
 import 'package:flutter_study/data/services/api_service.dart';
+import 'package:flutter_study/presentation/screens/book_edit_screen.dart';
 
 // [1] StatefulWidget 정의
 class BookDetailScreen extends StatefulWidget {
@@ -20,8 +21,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   // [4] ApiService 인스턴스 생성
   final ApiService apiService = ApiService();
 
-  // [5] Future 변수 선언 (책 상세 정보, 리뷰 목록)
-  late Future<Book> futureBook; // 책 상세 정보 Future
+  // [23] futureBook 대신 Book 객체를 State 로 관리 (수정 후 업데이트 위해)
+  Book? currentBook; // 현재 책 정보를 저장할 변수
+  bool _isBookLoading = true;
+  String? _bookError;
 
   // [12] 리뷰 목록 Future 대신 State 변수로 관리 시작
   List<Review>? currentReviews; // 리뷰 목록 데이터를 저장할 리스트
@@ -37,11 +40,44 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // [6] 책 상세 정보 로딩 시작
-    futureBook = apiService.getBookById(widget.bookId);
-    // [12-2] initState에서 리뷰 목록 로드 함수 호출
+    // [23-2] 책 상세 정보 로드 함수 호출
+    _loadBookDetails();
+    // [12-2] 리뷰 목록 로드 함수 호출
     _loadReviews();
   } // end initState
+
+  // [15] 위젯이 제거될 때 컨트롤러 정리
+  @override
+  void dispose() {
+    _reviewContentController.dispose(); // 리뷰 내용 입력 필드 제거
+    _reviewPasswordController.dispose(); // 리뷰 비밀번호 입력 필드 제거
+    super.dispose();
+  } // end dispose
+
+  // [23-3] 책 상세 정보 로드 함수 정의
+  Future<void> _loadBookDetails() async {
+    if (!mounted) return;
+    setState(() {
+      _isBookLoading = true;
+      _bookError = null;
+    });
+    try {
+      final book = await apiService.getBookById(widget.bookId);
+      if (mounted) {
+        setState(() {
+          currentBook = book; // 로드된 책 정보 저장
+          _isBookLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _bookError = e.toString().replaceFirst('Exception: ', '');
+          _isBookLoading = false;
+        });
+      }
+    }
+  } // end _loadBookDetails
 
   // [13] 리뷰 목록을 비동기적으로 로드하는 함수 정의
   Future<void> _loadReviews() async {
@@ -256,13 +292,36 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   } // end _deleteBook
 
-  // [15] 위젯이 제거될 때 컨트롤러 정리
-  @override
-  void dispose() {
-    _reviewContentController.dispose(); // 리뷰 내용 입력 필드 제거
-    _reviewPasswordController.dispose(); // 리뷰 비밀번호 입력 필드 제거
-    super.dispose();
-  } // end dispose
+
+  // [23-4] 정 화면으로 이동하는 함수
+  Future<void> _navigateToEditScreen() async {
+    // 현재 책 정보가 로드된 상태인지 확인
+    if (currentBook != null) {
+      // BookEditScreen 으로 이동하고 결과를 기다림 (수정된 Book 객체 또는 null)
+      final result = await Navigator.push<Book>( // 결과 타입을 Book 으로 명시
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookEditScreen(book: currentBook!), // 현재 책 정보 전달
+        ),
+      );
+
+      // 결과가 있고 (null 이 아니고), 위젯이 마운트된 상태이면
+      if (result != null && mounted) {
+        // 상태를 업데이트하여 화면에 수정된 정보 반영
+        setState(() {
+          currentBook = result; // 수정된 책 정보로 업데이트
+        });
+      } else if (result == null && mounted) {
+        // 수정 없이 돌아온 경우, 필요하다면 상세 정보 다시 로드
+        // _loadBookDetails(); // (선택적)
+      }
+    } else {
+      // 책 정보가 아직 로드되지 않았거나 오류 발생 시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('책 정보를 먼저 로드해주세요.')),
+      );
+    }
+  } // end _navigateToEditScreen
 
   // 화면 구성
   @override
@@ -272,6 +331,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         title: const Text('책 상세 정보'), // AppBar 제목
         // [22-2] 책 삭제 버튼 추가
         actions: [
+          // [23-5] 책 수정 버튼 추가
+          IconButton(
+            icon: const Icon(
+              Icons.edit_outlined,
+              color: Colors.green,
+            ),
+            tooltip: '책 수정',
+            onPressed: _navigateToEditScreen, // 수정 화면 이동 함수 연결
+          ),
           IconButton(
             icon: const Icon(
                 Icons.delete_outline,
@@ -280,7 +348,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             tooltip: '책 삭제', // 툴팁
             onPressed: _deleteBook, // [21] 에서 만든 책 삭제 함수 연결
           ),
-          // TODO: 책 수정 버튼 추가 (6단계)
         ],
       ), // end AppBar
       // [16] 화면 다른 곳 탭 시 키보드 숨기기 및 스크롤 가능하게
@@ -292,62 +359,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
             children: [
               // --- 책 상세 정보 섹션 ---
-              // [8] FutureBuilder로 책 상세 정보 로딩 및 표시
-              FutureBuilder<Book>(
-                future: futureBook,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    ); // 로딩 중 // end Center
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('오류: ${snapshot.error}'),
-                    ); // 에러 발생 // end Center
-                  } else if (snapshot.hasData) {
-                    final book = snapshot.data!;
-                    // [9] 책 정보 표시
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          book.title,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ), // end Text
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          '저자: ${book.author}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ), // end Text
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          '추천일: ${book.createdAt.toLocal().toString().substring(0, 10)}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ), // end Text
-
-                        const SizedBox(height: 16),
-
-                        Text(book.description),
-                        const SizedBox(height: 24),
-                        const Divider(), // 구분선
-                      ], // end children
-                    ); // end Column
-                  } else {
-                    return const Center(child: Text('책 정보를 불러올 수 없습니다.'));
-                  } // end if
-                }, // end builder
-              ), // end FutureBuilder
+              // [23-6] 책 상세 정보 표시 방식 변경
+              // 변경된 코드:
+              _buildBookDetailsSection(), // 상태 기반 책 정보 위젯 호출
               // --- [16-1] 리뷰 섹션 제목 ---
               Text('리뷰 목록', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 8),
+              _buildReviewList(), // 리뷰 목록 위젯 호출
 
-              const SizedBox(height: 16),
-
-              // [16-2] 리뷰 목록을 표시하는 위젯 호출 (상태 기반)
-              _buildReviewList(),
               const SizedBox(height: 24),
               const Divider(),
 
@@ -355,15 +374,42 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               Text('리뷰 작성하기', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 16),
               // [16-4] 리뷰 작성 폼을 생성하는 위젯 호출
-              _buildReviewForm(),
-
-              // TODO: 책 수정/삭제 버튼 추가 (5, 6단계)
+              _buildReviewForm(), // 리뷰 작성 폼 취젯 호출
             ], // end children
           ), // Column
         ), // SingleChildScrollView
       ), // GestureDetector
     ); // end Scaffold
   } // end build
+
+  // [23-7] 책 상세 정보 섹션 빌드 함수 : 현재 책 정보 상태에 따라 UI를 생성하는 함수
+  Widget _buildBookDetailsSection() {
+    if (_isBookLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (_bookError != null) {
+      return Center(child: Text('오류: $_bookError'));
+    } else if (currentBook != null) {
+      final book = currentBook!;
+      // 책 정보 UI (기존 FutureBuilder 내부와 동일한 구조)
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(book.title, style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Text('저자: ${book.author}', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text('추천일: ${book.createdAt.toLocal().toString().substring(0, 10)}', style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 16),
+          Text(book.description),
+          const SizedBox(height: 24),
+          const Divider(),
+        ],
+      ); // end Column
+    } else {
+      // 로딩도 아니고 에러도 아닌데 currentBook이 null인 경우 (예외적 상황)
+      return const Center(child: Text('책 정보를 표시할 수 없습니다.'));
+    }
+  } // end _buildBookDetailsSection
 
   // [17] 현재 상태에 따라 리뷰 목록 UI를 생성하는 함수
   Widget _buildReviewList() {
