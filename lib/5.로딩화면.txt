@@ -1,0 +1,19 @@
+[ 로딩 화면 ]
+    1. Rest api ( dio ) 간의 로딩 화면 구현
+        (1) 로딩 화면 표시
+    showDialog(
+        context: context,
+        builder: (context) => Center( child: CircularProgressIndicator() ,),
+        barrierDismissible: false,
+    );
+        (2) 로딩 화면 지우기
+    Navigator.pop(context); // 가장 앞(가장 최근에 열린)에 있는 위젯 닫기 ( showDialog() : 팝업 창 )
+
+[ 알림 메시지 ] : 화면에 간단한 메시지 띄우기
+    1. 라이브러리 설치
+        1. fluttertoast: ^8.2.12
+        2. [pub get] 새로고침
+    2. 사용법
+        Fluttertoast.showToast(
+            msg : "출력할내용",
+        );
