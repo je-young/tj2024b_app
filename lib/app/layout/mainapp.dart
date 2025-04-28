@@ -1,8 +1,7 @@
 // * mainapp.dart : 레이아웃 구성 하는 파일
 import 'package:flutter/material.dart';
-import 'package:flutter_study/app/member/signup.dart';
-import 'package:flutter_study/app/member/login.dart';
 import 'package:flutter_study/app/member/info.dart';
+import 'package:flutter_study/app/product/productList.dart';
 
 
 class MainApp extends StatefulWidget{
@@ -15,14 +14,14 @@ class _MainAppState extends State<MainApp>{
   // Widget : 여러 위젯들을 상속하는 상위 위젯(클래스)
   List<Widget> pages = [
     Text("홈 페이지"),
+    ProductList(), // 제품목록 위젯
+    Text("게시물2 페이지"), // Text("게시물2 페이지"),
     Info(), //Text("게시물1 페이지"),
-    Login(), // Text("게시물2 페이지"),
-    Signup() //Text("내정보 페이지"),
   ];
   // 2. 페이지 상단 제목 리스트
   List<String> pageTitle = [
     '홈' ,
-    '게시물1' ,
+    '제품목록' ,
     '게시물2' ,
     '내정보(회원가입)'
   ];
@@ -65,7 +64,7 @@ class _MainAppState extends State<MainApp>{
           type: BottomNavigationBarType.fixed, // 4개이상일때 아이콘을 고정 크기 설정 , 아이콘이 많아지면 자동으로 확대/축소
           items: [ // 여러개 버튼 위젯들
             BottomNavigationBarItem(icon: Icon(Icons.home) , label : '홈'), // 아이콘 위젯
-            BottomNavigationBarItem(icon: Icon(Icons.forum) , label: '게시물1' ),
+            BottomNavigationBarItem(icon: Icon(Icons.forum) , label: '제품목록' ),
             BottomNavigationBarItem(icon: Icon(Icons.forum) , label: "게시물2"),
             BottomNavigationBarItem(icon: Icon(Icons.person) , label: "내정보(회원가입)"),
           ],
