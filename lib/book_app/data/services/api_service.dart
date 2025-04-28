@@ -1,8 +1,8 @@
 // lib/data/services/api_service.dart : API 연동을 위한 Dart 클래스
 
 import 'package:dio/dio.dart'; // [10] HTTP 통신을 위한 라이브러리
-import 'package:flutter_study/data/models/book.dart'; // [2] Book 모델 import
-import 'package:flutter_study/data/models/review.dart'; // [6] Review 모델 import
+import 'package:flutter_study/book_app/data/models/book.dart'; // [2] Book 모델 import
+import 'package:flutter_study/book_app/data/models/review.dart'; // [6] Review 모델 import
 
 class ApiService {
   // [3] Dio 인스턴스 생성 및 기본 설정

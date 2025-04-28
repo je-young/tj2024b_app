@@ -1,8 +1,8 @@
 // lib/presentation/screens/book_edit_screen.dart : 책 정보 수정 화면
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study/data/models/book.dart'; // Book 모델 import
-import 'package:flutter_study/data/services/api_service.dart';
+import 'package:flutter_study/book_app/data/models/book.dart'; // Book 모델 import
+import 'package:flutter_study/book_app/data/services/api_service.dart';
 
 // [1] StatefulWidget 정의
 class BookEditScreen extends StatefulWidget {

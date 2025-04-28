@@ -1,10 +1,10 @@
 // lib/presentation/screens/home_screen.dart : HomeScreen 클래스 정의
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study/data/models/book.dart'; // [1] Book 모델 import
-import 'package:flutter_study/data/services/api_service.dart'; // [2] ApiService import
-import 'package:flutter_study/presentation/screens/book_detail_screen.dart'; // [13] BookDetailScreen import
-import 'package:flutter_study/presentation/screens/book_create_screen.dart'; // [14] BookCreateScreen import
+import 'package:flutter_study/book_app/data/models/book.dart'; // [1] Book 모델 import
+import 'package:flutter_study/book_app/data/services/api_service.dart'; // [2] ApiService import
+import 'package:flutter_study/book_app/presentation/screens/book_detail_screen.dart'; // [13] BookDetailScreen import
+import 'package:flutter_study/book_app/presentation/screens/book_create_screen.dart'; // [14] BookCreateScreen import
 
 
 // [3] StatefulWidget 클래스 정의

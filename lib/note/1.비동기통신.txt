@@ -1,0 +1,40 @@
+[JS] fetch 내장함수 이용한 HTTP REST 자바(톰캣) 통신
+[REACT] axios 함수 이용한 HTTP REST 자바(톰캣) 통신
+[Flutter] dio 함수 이용한 HTTP REST 자바(톰캣) 통신
+    -> http vs dio( + JSON타입변환 )
+
+[ dio ]
+    1. 정의 : Flutter(Dart언어 : google제작사) 에서 제공하는 HTTP 통신 라이브러리
+    2. 목적 : REST API 요청 과 응답 받아 서버와 통신
+    3. 설치
+        1. https://pub.dev/packages/dio/install
+        2. 프로젝트폴더내 'pubspec.yaml'
+            * yaml 확장자 언어 주의할점 : tab 이용한 구분처리
+                [x] dev_dependencie.flutter_test.sdk = flutter [ x ]
+                [o] dev_dependencie :
+                        flutter_test :
+                            sdk: flutter
+        3. 대략 '30'번째 줄에 'dependencies:'
+            dependencies:
+                dio: ^5.8.0+1  # 비동기 통신 라이브러리 추가
+                flutter:
+                    sdk: flutter
+        4. 오른쪽 상단 'pub get' 클릭 ( 라이브러리 최신화 )
+
+    4. 사용법
+        1. 파일상단에 import 'package:dio/dio.dart';
+        2. final dio = Dio();
+        3. URL 과 데이터
+            dio.get('url?key=$변수값&key=변수값')
+            dio.delete('url?key=$변수값&key=변수값')
+            dio.post('url' , data : {body} )
+            dio.put('url' , data : {body} )
+
+        동기화 예시 ]
+            void 함수명() async{
+                final cno = 1;
+                try{
+                   final response  = await dio.get( 'http://localhost:8080/day03/task/student?cno=$cno' );
+                   print( response.data );
+                }catch(e){ print(e); }
+            }

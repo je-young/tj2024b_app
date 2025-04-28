@@ -2,7 +2,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study/data/services/api_service.dart';
+import 'package:flutter_study/book_app/data/services/api_service.dart';
 
 // [1] StatefulWidget 정의
 class BookCreateScreen extends StatefulWidget {

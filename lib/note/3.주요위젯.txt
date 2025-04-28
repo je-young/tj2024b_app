@@ -1,0 +1,32 @@
+[ 레이아웃 주요 위젯 ]
+1. MaterialApp()  : 전체 위젯을 감싼 뼈대 역할 위젯
+    -> 라우트 설정 , 초기화 경로 , 테마 설정 등등
+    1. 초기화 경로 설정: initialRoute : "/"
+    2. 라우트 경로 설정 : routes : { "경로" : (context)=>위젯명() }
+    3.
+        - 이벤트로 특정 경로 호출/이동
+            Navigator.pushNamed( context , "경로");
+            * 경로 호출/이동시 인자값 전달 방법
+                Navigator.pushNamed( context , "경로" , arguments : 인자값 );
+            *  해당 arguments 값 을 가져오는 방법
+               타입 변수 = ModalRoute.of( context )!.settings.arguments as 인자값타입;
+                    -> ModalRoute : 라우터가 화면 전환할때 사용되는 객체
+                    -> ModalRoute.of( context ) : 위젯 트리 에서 현재 위젯의 위치 뜻
+                    -> ModalRoute.of( context )!.settings.arguments : 부모 위젯으로 부터 전달받은 매개변수 반환
+
+        - 이벤트로 이전 경로 호출
+            Navigator.pop( context );
+
+2. Scaffold()     : 헤더 , 푸터 , 본문 , 사이드바 등등 제공하는 위젯
+    1. 헤더 : appBar : AppBar( )
+    2. 본문 : body :
+    3. 푸터 : bottomNavigationBar :
+
+[ 일반 주요 위젯 ]
+1. Text() : 화면에 출력할 텍스트 위젯
+    Text(출력할내용);
+2. Center( ) : 자식 위젯들을 가운데 정렬
+    Center( child : 위젯명() );
+3. Column( ) : 하위 모든 요소들을 세로 배치
+    children : [ 위젯명() , 위젯명() , 위젯명() ]
+4. Row( ) : 하위 모든 요소들을 가로 배치

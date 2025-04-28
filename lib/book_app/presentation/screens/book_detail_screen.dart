@@ -1,10 +1,10 @@
 // lib/presentation/screens/book_detail_screen.dart : 책 상세 정보 화면
 
 import 'package:flutter/material.dart';
-import 'package:flutter_study/data/models/book.dart';
-import 'package:flutter_study/data/models/review.dart';
-import 'package:flutter_study/data/services/api_service.dart';
-import 'package:flutter_study/presentation/screens/book_edit_screen.dart';
+import 'package:flutter_study/book_app/data/models/book.dart';
+import 'package:flutter_study/book_app/data/models/review.dart';
+import 'package:flutter_study/book_app/data/services/api_service.dart';
+import 'package:flutter_study/book_app/presentation/screens/book_edit_screen.dart';
 
 // [1] StatefulWidget 정의
 class BookDetailScreen extends StatefulWidget {
