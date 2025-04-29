@@ -2,8 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-import 'login.dart';
+import 'package:flutter_study/app/member/login.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -39,7 +38,7 @@ class _SignupState extends State<Signup> {
     try {
       Dio dio = Dio();
       final response = await dio.post(
-        "http://localhost:8080/member/signup",
+        "http://192.168.40.107:8080/member/signup",
         data: sendData,
       );
       final data = response.data;
@@ -72,16 +71,13 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        // Container( padding :  , margin : ); 안쪽/바깥 여백 위젯
+      body: Container( // Container( padding :  , margin : ); 안쪽/바깥 여백 위젯
         padding: EdgeInsets.all(30), // EdgeInsets.all() : 상하좌우 모두 적용되는 안쪽 여백
         margin: EdgeInsets.all(30), // EdgeInsets.all() : 상하좌우 모두 적용되는 바깥 여백
         child: Column(
           // 세로배치 위젯
-          mainAxisAlignment: MainAxisAlignment.center,
-          // 주 축으로 가운데 정렬( Column 이면 세로 , Row이면 가로 )
-          children: [
-            // 하위 위젯
+          mainAxisAlignment: MainAxisAlignment.center, // 주 축으로 가운데 정렬( Column 이면 세로 , Row이면 가로 )
+          children: [ // 하위 위젯
             TextField(
               controller: emailControl,
               decoration: InputDecoration(

@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_study/app/member/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../layout/mainapp.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -19,14 +22,20 @@ class _LoginState extends State<Login> {
     try {
       Dio dio = Dio();
       final sendData = {"memail": emailControl.text, "mpwd": pwdControl.text};
-      final response = await dio.post("http://localhost:8080/member/login", data: sendData,);
+      final response = await dio.post("http://192.168.40.107:8080/member/login", data: sendData,);
       final data = response.data;
-      if (data != '') {
-        // 로그인 성공시 토큰 SharedPreferences 저장하기.
+      if (data != '') { // 로그인 성공시 토큰 SharedPreferences 저장하기.
         // 1. 전역변수 호출
         final prefs = await SharedPreferences.getInstance();
         // 2. 전역변수 값 추가
         await prefs.setString('token', data);
+
+        // * 로그인 성공시 페이지 전환
+        Navigator.pushReplacement(
+          context ,
+          MaterialPageRoute(builder: (context)=>MainApp() ),
+        );
+
       } else {
         print("로그인 실패 ");
       }
@@ -54,7 +63,11 @@ class _LoginState extends State<Login> {
             SizedBox( height: 20 , ),
             ElevatedButton( onPressed: onLogin , child: Text("로그인") ),
             SizedBox( height: 20 ,),
-            TextButton(onPressed: ()=>{}, child: Text("처음 방문이면 _회원가입") )
+            TextButton(onPressed: ()=>{
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => Signup() )
+              )
+            }, child: Text("처음 방문이면 _회원가입") )
           ],
         ),// end Column
       ), // end Container
